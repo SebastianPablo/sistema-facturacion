@@ -4,7 +4,7 @@
 echo "🚀 Iniciando aplicación..."
 
 # Crear superusuario si no existe
-python manage.py shell -c "
+python3 manage.py shell -c "
 from django.contrib.auth import get_user_model
 User = get_user_model()
 if not User.objects.filter(username='admin').exists():
@@ -16,4 +16,4 @@ else:
 
 # Iniciar servidor
 echo "🌐 Iniciando servidor..."
-gunicorn aguas_del_valle.wsgi --log-file - --bind 0.0.0.0:$PORT
+python3 -m gunicorn aguas_del_valle.wsgi --log-file - --bind 0.0.0.0:$PORT

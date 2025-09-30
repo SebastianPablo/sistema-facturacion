@@ -2,6 +2,7 @@ from .settings import *
 import dj_database_url
 import os
 from pathlib import Path
+from decouple import config, Csv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -9,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = False
 
 # Configurar hosts permitidos
-ALLOWED_HOSTS = ['*']  # Temporal, se configurará en Heroku
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=Csv())
 
 # Configurar base de datos para Render
 if os.environ.get('DATABASE_URL'):
