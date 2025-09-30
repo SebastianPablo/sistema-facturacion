@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Nuevo Aviso - Prueba{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-bell"></i> Nuevo Aviso</h1>
+            <a href="{% url 'lista_avisos' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver a Avisos
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Información del Aviso</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'lista_avisos' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-info">
+                            <i class="bi bi-bell"></i> Crear Aviso
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Tipos de Aviso</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li><i class="bi bi-exclamation-triangle text-warning"></i> <strong>Corte Programado:</strong> Información sobre cortes de servicio</li>
+                    <li><i class="bi bi-tools text-info"></i> <strong>Mantenimiento:</strong> Avisos de trabajos de mantenimiento</li>
+                    <li><i class="bi bi-currency-dollar text-success"></i> <strong>Cambio de Tarifa:</strong> Modificaciones en las tarifas</li>
+                    <li><i class="bi bi-info-circle text-primary"></i> <strong>Información General:</strong> Comunicaciones generales</li>
+                    <li><i class="bi bi-clock text-danger"></i> <strong>Recordatorio de Pago:</strong> Recordatorios de pago</li>
+                </ul>
+                <div class="alert alert-info">
+                    <strong>Nota:</strong> Una vez creado el aviso, podrá enviarlo por correo electrónico al cliente.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

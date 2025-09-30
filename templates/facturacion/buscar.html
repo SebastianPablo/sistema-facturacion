@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% block title %}Búsqueda - Prueba{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="bi bi-search"></i> Búsqueda Global
+        </h1>
+    </div>
+</div>
+
+<!-- Formulario de Búsqueda -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="GET" action="{% url 'buscar' %}">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="q" 
+                               placeholder="Buscar clientes, boletas, avisos..." 
+                               value="{{ query }}">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if query %}
+    <!-- Resultados de Clientes -->
+    {% if resultados.clientes %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-people"></i> Clientes ({{ resultados.clientes|length }})</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Email</th>
+                                    <th>Teléfono</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cliente in resultados.clientes %}
+                                <tr>
+                                    <td>{{ cliente.nombre }}</td>
+                                    <td>{{ cliente.email }}</td>
+                                    <td>{{ cliente.telefono|default:"-" }}</td>
+                                    <td>
+                                        {% if cliente.activo %}
+                                            <span class="badge bg-success">Activo</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Inactivo</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'detalle_cliente' cliente.id %}" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Resultados de Boletas -->
+    {% if resultados.boletas %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-receipt"></i> Boletas ({{ resultados.boletas|length }})</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Número</th>
+                                    <th>Cliente</th>
+                                    <th>Fecha Emisión</th>
+                                    <th>Monto</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for boleta in resultados.boletas %}
+                                <tr>
+                                    <td>{{ boleta.numero_boleta }}</td>
+                                    <td>{{ boleta.cliente.nombre }}</td>
+                                    <td>{{ boleta.fecha_emision|date:"d/m/Y" }}</td>
+                                    <td>${{ boleta.monto_total|floatformat:0 }} CLP</td>
+                                    <td>
+                                        {% if boleta.estado == 'pagada' %}
+                                            <span class="badge bg-success">{{ boleta.get_estado_display }}</span>
+                                        {% elif boleta.estado == 'vencida' %}
+                                            <span class="badge bg-danger">{{ boleta.get_estado_display }}</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">{{ boleta.get_estado_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'detalle_cliente' boleta.cliente.id %}" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-eye"></i> Ver Cliente
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Resultados de Avisos -->
+    {% if resultados.avisos %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-bell"></i> Avisos ({{ resultados.avisos|length }})</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Cliente</th>
+                                    <th>Tipo</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for aviso in resultados.avisos %}
+                                <tr>
+                                    <td>{{ aviso.titulo }}</td>
+                                    <td>{{ aviso.cliente.nombre }}</td>
+                                    <td>{{ aviso.get_tipo_aviso_display }}</td>
+                                    <td>{{ aviso.fecha|date:"d/m/Y H:i" }}</td>
+                                    <td>
+                                        {% if aviso.enviado %}
+                                            <span class="badge bg-success">Enviado</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">Pendiente</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'detalle_cliente' aviso.cliente.id %}" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-eye"></i> Ver Cliente
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Sin Resultados -->
+    {% if not resultados.clientes and not resultados.boletas and not resultados.avisos %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center text-muted py-4">
+                    <i class="bi bi-search fs-1"></i>
+                    <p class="mt-2">No se encontraron resultados para "{{ query }}"</p>
+                    <p>Intenta con otros términos de búsqueda.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% else %}
+    <!-- Instrucciones de Búsqueda -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center text-muted py-4">
+                    <i class="bi bi-search fs-1"></i>
+                    <p class="mt-2">Ingresa un término de búsqueda para encontrar:</p>
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-people"></i> Clientes por nombre</li>
+                        <li><i class="bi bi-receipt"></i> Boletas por número</li>
+                        <li><i class="bi bi-bell"></i> Avisos por título</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

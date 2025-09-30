@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Mediciones - Prueba{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-speedometer2"></i> Mediciones</h1>
+            <a href="{% url 'crear_medicion' %}" class="btn btn-success">
+                <i class="bi bi-plus"></i> Nueva Medición
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Lista de Mediciones</h5>
+            </div>
+            <div class="card-body">
+                {% if mediciones %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Fecha</th>
+                                    <th>Consumo (m³)</th>
+                                    <th>Lectura Anterior</th>
+                                    <th>Lectura Actual</th>
+                                    <th>Monto</th>
+                                    <th>Observaciones</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for medicion in mediciones %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'detalle_cliente' medicion.cliente.id %}">
+                                            {{ medicion.cliente.nombre }}
+                                        </a>
+                                    </td>
+                                    <td>{{ medicion.fecha|date:"d/m/Y" }}</td>
+                                    <td>{{ medicion.consumo_m3 }} m³</td>
+                                    <td>{{ medicion.lectura_anterior|default:"-" }}</td>
+                                    <td>{{ medicion.lectura_actual|default:"-" }}</td>
+                                    <td>${{ medicion.monto_calculado|floatformat:0 }} CLP</td>
+                                    <td>{{ medicion.observaciones|truncatechars:30|default:"-" }}</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'generar_boleta' %}?medicion={{ medicion.id }}" 
+                                               class="btn btn-sm btn-warning" title="Generar Boleta">
+                                                <i class="bi bi-receipt"></i>
+                                            </a>
+                                            <a href="{% url 'editar_medicion' medicion.id %}" 
+                                               class="btn btn-sm btn-primary" title="Editar">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a href="{% url 'eliminar_medicion' medicion.id %}" 
+                                               class="btn btn-sm btn-danger" title="Eliminar">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-speedometer2 fs-1"></i>
+                        <p class="mt-2">No hay mediciones registradas</p>
+                        <a href="{% url 'crear_medicion' %}" class="btn btn-primary">
+                            <i class="bi bi-plus"></i> Registrar Primera Medición
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

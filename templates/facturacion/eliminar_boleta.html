@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Boleta - Prueba{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-trash text-danger"></i> Eliminar Boleta</h1>
+            <a href="{% url 'detalle_cliente' boleta.cliente.id %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver al Cliente
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Confirmar Eliminación</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    <h5><i class="bi bi-exclamation-triangle"></i> ¡Advertencia!</h5>
+                    <p>Está a punto de eliminar permanentemente la boleta <strong>#{{ boleta.numero_boleta }}</strong>.</p>
+                    <p><strong>Esta acción eliminará:</strong></p>
+                    <ul>
+                        <li>La boleta y todos sus datos</li>
+                        <li>El historial de envíos por email</li>
+                    </ul>
+                    <p class="mb-0"><strong>Esta acción no se puede deshacer.</strong></p>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'detalle_cliente' boleta.cliente.id %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Eliminar Definitivamente
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-receipt"></i> Información de la Boleta</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Número:</dt>
+                    <dd class="col-sm-8">{{ boleta.numero_boleta }}</dd>
+                    
+                    <dt class="col-sm-4">Cliente:</dt>
+                    <dd class="col-sm-8">{{ boleta.cliente.nombre }}</dd>
+                    
+                    <dt class="col-sm-4">Fecha Emisión:</dt>
+                    <dd class="col-sm-8">{{ boleta.fecha_emision|date:"d/m/Y" }}</dd>
+                    
+                    <dt class="col-sm-4">Vencimiento:</dt>
+                    <dd class="col-sm-8">{{ boleta.fecha_vencimiento|date:"d/m/Y" }}</dd>
+                    
+                    <dt class="col-sm-4">Monto:</dt>
+                    <dd class="col-sm-8">${{ boleta.monto_total|floatformat:0 }} CLP</dd>
+                    
+                    <dt class="col-sm-4">Estado:</dt>
+                    <dd class="col-sm-8">
+                        {% if boleta.estado == 'pagada' %}
+                            <span class="badge bg-success">{{ boleta.get_estado_display }}</span>
+                        {% elif boleta.estado == 'vencida' %}
+                            <span class="badge bg-danger">{{ boleta.get_estado_display }}</span>
+                        {% else %}
+                            <span class="badge bg-warning">{{ boleta.get_estado_display }}</span>
+                        {% endif %}
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

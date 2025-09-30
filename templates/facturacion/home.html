@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - Prueba{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="bi bi-droplet-fill text-primary"></i> 
+            Sistema de Facturación - Prueba
+        </h1>
+    </div>
+</div>
+
+<!-- Estadísticas -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <i class="bi bi-people-fill fs-1"></i>
+                <h3 class="mt-2">{{ total_clientes }}</h3>
+                <p class="mb-0">Clientes Activos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <i class="bi bi-receipt fs-1"></i>
+                <h3 class="mt-2">{{ boletas_pendientes }}</h3>
+                <p class="mb-0">Boletas Pendientes</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <i class="bi bi-bell fs-1"></i>
+                <h3 class="mt-2">{{ aviso_pendientes }}</h3>
+                <p class="mb-0">Avisos Pendientes</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <i class="bi bi-speedometer2 fs-1"></i>
+                <h3 class="mt-2">{{ ultimas_mediciones|length }}</h3>
+                <p class="mb-0">Mediciones Recientes</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Acciones Rápidas -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-lightning-fill"></i> Acciones Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'crear_cliente' %}" class="btn btn-primary w-100">
+                            <i class="bi bi-person-plus"></i> Nuevo Cliente
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'crear_medicion' %}" class="btn btn-success w-100">
+                            <i class="bi bi-speedometer2"></i> Registrar Medición
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'generar_boleta' %}" class="btn btn-warning w-100">
+                            <i class="bi bi-receipt"></i> Generar Boleta
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'crear_aviso' %}" class="btn btn-info w-100">
+                            <i class="bi bi-bell"></i> Crear Aviso
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Últimas Mediciones -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Últimas Mediciones</h5>
+                <a href="{% url 'crear_medicion' %}" class="btn btn-sm btn-success">
+                    <i class="bi bi-plus"></i> Nueva Medición
+                </a>
+            </div>
+            <div class="card-body">
+                {% if ultimas_mediciones %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Fecha</th>
+                                    <th>Consumo (m³)</th>
+                                    <th>Monto</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for medicion in ultimas_mediciones %}
+                                <tr>
+                                    <td>{{ medicion.cliente.nombre }}</td>
+                                    <td>{{ medicion.fecha|date:"d/m/Y" }}</td>
+                                    <td>{{ medicion.consumo_m3 }} m³</td>
+                                    <td>${{ medicion.monto_calculado|floatformat:0 }} CLP</td>
+                                    <td>
+                                        <a href="{% url 'detalle_cliente' medicion.cliente.id %}" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-inbox fs-1"></i>
+                        <p class="mt-2">No hay mediciones registradas</p>
+                        <a href="{% url 'crear_medicion' %}" class="btn btn-primary">
+                            <i class="bi bi-plus"></i> Registrar Primera Medición
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

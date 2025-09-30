@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block title %}Reportes - Prueba{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="bi bi-graph-up"></i> Reportes y Estadísticas
+        </h1>
+    </div>
+</div>
+
+<!-- Estadísticas Generales -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <i class="bi bi-people-fill fs-1"></i>
+                <h3 class="mt-2">{{ stats.total_clientes }}</h3>
+                <p class="mb-0">Clientes Activos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <i class="bi bi-receipt fs-1"></i>
+                <h3 class="mt-2">{{ stats.total_boletas }}</h3>
+                <p class="mb-0">Total Boletas</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <i class="bi bi-currency-dollar fs-1"></i>
+                <h3 class="mt-2">${{ stats.ingresos_totales|floatformat:0 }}</h3>
+                <p class="mb-0">Ingresos Totales</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <i class="bi bi-speedometer2 fs-1"></i>
+                <h3 class="mt-2">{{ stats.consumo_promedio|floatformat:1 }} m³</h3>
+                <p class="mb-0">Consumo Promedio</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estado de Boletas -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="bi bi-clock text-warning fs-1"></i>
+                <h3 class="mt-2">{{ stats.boletas_pendientes }}</h3>
+                <p class="mb-0">Boletas Pendientes</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="bi bi-check-circle text-success fs-1"></i>
+                <h3 class="mt-2">{{ stats.boletas_pagadas }}</h3>
+                <p class="mb-0">Boletas Pagadas</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="bi bi-exclamation-triangle text-danger fs-1"></i>
+                <h3 class="mt-2">{{ stats.boletas_vencidas }}</h3>
+                <p class="mb-0">Boletas Vencidas</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Boletas por Mes -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-bar-chart"></i> Boletas por Mes (Últimos 6 meses)</h5>
+            </div>
+            <div class="card-body">
+                {% if boletas_por_mes %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Mes</th>
+                                    <th>Cantidad de Boletas</th>
+                                    <th>Total Recaudado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for mes in boletas_por_mes %}
+                                <tr>
+                                    <td>{{ mes.mes }}</td>
+                                    <td>{{ mes.cantidad }}</td>
+                                    <td>${{ mes.total|floatformat:0 }} CLP</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-bar-chart fs-1"></i>
+                        <p class="mt-2">No hay datos de boletas para mostrar</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Acciones Rápidas -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-lightning-fill"></i> Acciones Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'lista_clientes' %}" class="btn btn-primary w-100">
+                            <i class="bi bi-people"></i> Ver Clientes
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'lista_mediciones' %}" class="btn btn-success w-100">
+                            <i class="bi bi-speedometer2"></i> Ver Mediciones
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'lista_boletas' %}" class="btn btn-warning w-100">
+                            <i class="bi bi-receipt"></i> Ver Boletas
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'buscar' %}" class="btn btn-info w-100">
+                            <i class="bi bi-search"></i> Buscar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

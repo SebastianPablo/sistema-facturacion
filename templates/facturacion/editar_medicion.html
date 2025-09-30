@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Editar Medición - Prueba{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-pencil"></i> Editar Medición</h1>
+            <a href="{% url 'detalle_cliente' medicion.cliente.id %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver al Cliente
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Información de la Medición</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'detalle_cliente' medicion.cliente.id %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Actualizar Medición
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Información</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">
+                    Modifique la información de la medición. El monto se recalculará automáticamente.
+                </p>
+                <div class="alert alert-warning">
+                    <strong>Nota:</strong> Si ya se generó una boleta para esta medición, el monto de la boleta se actualizará automáticamente.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const lecturaAnterior = document.getElementById('id_lectura_anterior');
+    const lecturaActual = document.getElementById('id_lectura_actual');
+    
+    function calcularConsumo() {
+        if (lecturaAnterior.value && lecturaActual.value) {
+            const anterior = parseFloat(lecturaAnterior.value);
+            const actual = parseFloat(lecturaActual.value);
+            const consumo = actual - anterior;
+            
+            if (consumo >= 0) {
+                const monto = consumo * 500;
+                // Mostrar cálculo en tiempo real
+                const infoDiv = document.querySelector('.alert-warning');
+                if (infoDiv) {
+                    infoDiv.innerHTML = `
+                        <strong>Nota:</strong> Si ya se generó una boleta para esta medición, el monto de la boleta se actualizará automáticamente.<br>
+                        <strong>Consumo calculado:</strong> ${consumo.toFixed(2)} m³<br>
+                        <strong>Monto estimado:</strong> $${monto.toFixed(0)} CLP
+                    `;
+                }
+            }
+        }
+    }
+    
+    if (lecturaAnterior && lecturaActual) {
+        lecturaAnterior.addEventListener('input', calcularConsumo);
+        lecturaActual.addEventListener('input', calcularConsumo);
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}

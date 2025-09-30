@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Cambiar Estado de Boleta - Prueba{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-arrow-repeat"></i> Cambiar Estado de Boleta</h1>
+            <a href="{% url 'detalle_cliente' boleta.cliente.id %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver al Cliente
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Información de la Boleta</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-sm-3"><strong>Número:</strong></div>
+                    <div class="col-sm-9">{{ boleta.numero_boleta }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-3"><strong>Cliente:</strong></div>
+                    <div class="col-sm-9">{{ boleta.cliente.nombre }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-3"><strong>Monto:</strong></div>
+                    <div class="col-sm-9">${{ boleta.monto_total|floatformat:0 }} CLP</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-3"><strong>Estado Actual:</strong></div>
+                    <div class="col-sm-9">
+                        {% if boleta.estado == 'pagada' %}
+                            <span class="badge bg-success">{{ boleta.get_estado_display }}</span>
+                        {% elif boleta.estado == 'vencida' %}
+                            <span class="badge bg-danger">{{ boleta.get_estado_display }}</span>
+                        {% else %}
+                            <span class="badge bg-warning">{{ boleta.get_estado_display }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="estado" class="form-label"><strong>Nuevo Estado:</strong></label>
+                        <select class="form-select" id="estado" name="estado" required>
+                            <option value="">Seleccione un estado...</option>
+                            <option value="pendiente" {% if boleta.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                            <option value="pagada" {% if boleta.estado == 'pagada' %}selected{% endif %}>Pagada</option>
+                            <option value="vencida" {% if boleta.estado == 'vencida' %}selected{% endif %}>Vencida</option>
+                            <option value="cancelada" {% if boleta.estado == 'cancelada' %}selected{% endif %}>Cancelada</option>
+                        </select>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'detalle_cliente' boleta.cliente.id %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="bi bi-arrow-repeat"></i> Cambiar Estado
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Estados de Boleta</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li><span class="badge bg-warning">Pendiente</span> - Boleta generada, esperando pago</li>
+                    <li><span class="badge bg-success">Pagada</span> - Boleta pagada por el cliente</li>
+                    <li><span class="badge bg-danger">Vencida</span> - Boleta vencida sin pago</li>
+                    <li><span class="badge bg-secondary">Cancelada</span> - Boleta cancelada</li>
+                </ul>
+                <div class="alert alert-info">
+                    <strong>Nota:</strong> Al cambiar el estado, se actualizará el registro en la base de datos.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

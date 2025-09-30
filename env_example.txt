@@ -1,0 +1,14 @@
+# Configuración para Producción
+SECRET_KEY=tu-secret-key-aqui
+DEBUG=False
+ALLOWED_HOSTS=tu-dominio.com,www.tu-dominio.com
+
+# Base de Datos
+DATABASE_URL=postgresql://usuario:contraseña@host:puerto/nombre_db
+
+# Correo Electrónico
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=tu-email@gmail.com
+EMAIL_HOST_PASSWORD=tu-contraseña-app
