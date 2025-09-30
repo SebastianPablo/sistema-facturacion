@@ -1,5 +1,9 @@
 from .settings import *
 import dj_database_url
+import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Configuración para producción
 DEBUG = False
