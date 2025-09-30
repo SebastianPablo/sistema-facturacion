@@ -7,12 +7,21 @@ DEBUG = False
 # Configurar hosts permitidos
 ALLOWED_HOSTS = ['*']  # Temporal, se configurará en Heroku
 
-# Configurar base de datos para Heroku
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL')
-    )
-}
+# Configurar base de datos para Render
+if os.environ.get('DATABASE_URL'):
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL')
+        )
+    }
+else:
+    # Usar SQLite si no hay DATABASE_URL
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Configuración de archivos estáticos
 STATIC_ROOT = BASE_DIR / 'staticfiles'
